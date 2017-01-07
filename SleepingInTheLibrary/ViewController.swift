@@ -78,8 +78,31 @@ class ViewController: UIViewController {
         let request = URLRequest(url: url)
         
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            // if an error occurs, print it and re-enable the UI
+            func displayError(_ error: String) {
+                print(error)
+                print("URL at time of error: \(url)")
+                performUIUpdatesOnMain {
+                    self.setUIEnabled(true)
+                }
+            }
+            
+            // no error
             if error == nil {
-                print(data!)
+                
+                // there was data returned
+                if let data = data {
+                    
+                    let parsedResult: [String:AnyObject]!
+                    do {
+                        parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
+                    } catch {
+                        displayError("Could not parse the data as JSON: '\(data)'")
+                        return
+                    }
+                    
+                    print(parsedResult)
+                }
             }
         }
         
