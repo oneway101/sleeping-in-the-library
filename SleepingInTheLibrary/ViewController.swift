@@ -101,11 +101,25 @@ class ViewController: UIViewController {
                         return
                     }
                     
+                    //Pick random image
                     if let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String: AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
                         
                         let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
                         let photoDictionary = photoArray[randomPhotoIndex] as [String: AnyObject]
-                        print(photoDictionary)
+                        
+                        //Set the image and title
+                        if let imageURLString = photoDictionary[Constants.FlickrResponseKeys.MediumURL] as? String, let photoTitle = photoDictionary[Constants.FlickrResponseKeys.Title] as? String{
+                            
+                            let imageURL = URL(string: imageURLString)
+                            if let imageData = try? Data(contentsOf: imageURL!) {
+                                performUIUpdatesOnMain {
+                                    self.photoImageView.image = UIImage(data: imageData)
+                                    self.photoTitleLabel.text = photoTitle
+                                    //re-enable setUI to grabbing other images
+                                    self.setUIEnabled(true)
+                                }
+                            }
+                        }
                         
                     }
                 }
