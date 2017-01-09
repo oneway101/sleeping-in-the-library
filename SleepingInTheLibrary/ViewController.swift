@@ -101,7 +101,13 @@ class ViewController: UIViewController {
                         return
                     }
                     
-                    print(parsedResult)
+                    if let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String: AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
+                        
+                        let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
+                        let photoDictionary = photoArray[randomPhotoIndex] as [String: AnyObject]
+                        print(photoDictionary)
+                        
+                    }
                 }
             }
         }
